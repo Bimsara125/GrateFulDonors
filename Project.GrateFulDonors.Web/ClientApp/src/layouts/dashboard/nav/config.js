@@ -34,7 +34,7 @@ function DashboardNav() {
       icon: icon('ic_analytics'),
     },
     {
-      title: 'user',
+      title: 'users',
       path: '/dashboard/user',
       icon: icon('ic_user'),
     },

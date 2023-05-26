@@ -21,7 +21,7 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Blog | GrateFulDonors </title>
+        <title> Blog | GrateFulDonors </title>
       </Helmet>
 
       <Container>

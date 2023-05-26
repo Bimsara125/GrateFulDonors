@@ -168,6 +168,7 @@ export default function RegistrationForm() {
                             helperText={touched.userTypeID && errors.userTypeID}
                         >
                             <MenuItem key={0} value={0}> Select User Type</MenuItem>
+                            <MenuItem value={1}> Administrator</MenuItem>
                             <MenuItem value={2}> Donor</MenuItem>
                             <MenuItem value={3}> Seeker</MenuItem>
                         </TextField>
@@ -208,20 +209,21 @@ export default function RegistrationForm() {
                             error={Boolean(touched.dob && errors.dob)}
                             helperText={touched.dob && errors.dob}
                         />
-                        <TextField
-                            select
-                            fullWidth
-                            size="small"
-                            label="Donation Type "
-                            value={formik.values.donationTypeID}
-                            onChange={formik.handleChange}
-                            {...getFieldProps('donationTypeID')}
-                            error={Boolean(touched.donationTypeID && errors.donationTypeID)}
-                            helperText={touched.donationTypeID && errors.donationTypeID}
-                        >
-                            <MenuItem key={0} value={0}> Select Donation Type</MenuItem>
-                            {generateDonationTypeDropDownMenu(donationTypes)}
-                        </TextField>
+                        {formik.values.userTypeID != 1 ?
+                            <TextField
+                                select
+                                fullWidth
+                                size="small"
+                                label="Donation Type "
+                                value={formik.values.donationTypeID}
+                                onChange={formik.handleChange}
+                                {...getFieldProps('donationTypeID')}
+                                error={Boolean(touched.donationTypeID && errors.donationTypeID)}
+                                helperText={touched.donationTypeID && errors.donationTypeID}
+                            >
+                                <MenuItem key={0} value={0}> Select Donation Type</MenuItem>
+                                {generateDonationTypeDropDownMenu(donationTypes)}
+                            </TextField> : null}
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px', marginBottom: '25px' }} spacing={3}>
                         <TextField
@@ -301,30 +303,31 @@ export default function RegistrationForm() {
                             helperText={touched.email && errors.email}
                         />
                     </Stack>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                        <Card sx={{ maxWidth: 200 }}>
-                            <Card hidden={ImageHide}>
-                                <CardMedia
-                                    component="img"
-                                    height="80"
-                                    image={`data:image/jpeg;base64,${ImageObject}`}
-                                    {...getFieldProps('image')}
-                                    error={Boolean(touched.image && errors.image)}
-                                    helperText={touched.image && errors.image}
+                    {formik.values.userTypeID != 1 ?
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <Card sx={{ maxWidth: 200 }}>
+                                <Card hidden={ImageHide}>
+                                    <CardMedia
+                                        component="img"
+                                        height="80"
+                                        image={`data:image/jpeg;base64,${ImageObject}`}
+                                        {...getFieldProps('image')}
+                                        error={Boolean(touched.image && errors.image)}
+                                        helperText={touched.image && errors.image}
+                                    />
+                                </Card>
+                                <ImageUploader
+                                    withIcon={false}
+                                    singleImage={true}
+                                    withPreview={true}
+                                    buttonText='Upload Your Image'
+                                    onChange={onDrop}
+                                    image={formik.values.image}
+                                    imgExtension={['.jpg', '.png']}
+                                    maxFileSize={5242880}
                                 />
                             </Card>
-                            <ImageUploader
-                                withIcon={false}
-                                singleImage={true}
-                                withPreview={true}
-                                buttonText='Upload Your Image'
-                                onChange={onDrop}
-                                image={formik.values.image}
-                                imgExtension={['.jpg', '.png']}
-                                maxFileSize={5242880}
-                            />
-                        </Card>
-                    </Stack>
+                        </Stack> : null}
                     <LoadingButton fullWidth size="large" type="submit" variant="contained">
                         Register
                     </LoadingButton>
