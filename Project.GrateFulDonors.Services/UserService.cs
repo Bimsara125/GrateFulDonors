@@ -11,6 +11,8 @@ using Project.GrateFulDonors.Core.Models;
 using System.Linq;
 using Project.GrateFulDonors.Dapper;
 using System.IO;
+using Dapper;
+using static Dapper.SqlMapper;
 
 namespace Project.GrateFulDonors.Services
 {
@@ -73,13 +75,56 @@ namespace Project.GrateFulDonors.Services
 
         public async Task<GrateFulDonorsResponse> Registration(UserRegistrationInsertModel model)
         {
+            var lastrecordValue = await GetLastQRCodeNumber();
+            var lastNumber = (int)lastrecordValue.Data;
+            int incrementedNum;
+            if (lastNumber != 0)
+            {
+                incrementedNum = lastNumber + 1;
+            }
+            else
+            {
+                incrementedNum = 01000000;
+            }
             var passwordEncrypted = PasswordEncrypt(model.Password);
-            if (model.UserTypeID == 2)
+            if(model.UserTypeID == 1)
+            {
+                try
+                {
+                    var parameters = new Dictionary<string, Tuple<string, DbType, ParameterDirection>>
+                    {
+                        { "UserID", Tuple.Create(0.ToString(), DbType.Int32, ParameterDirection.InputOutput) },
+                        { "UserName", Tuple.Create(model.FirstName.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "UserType", Tuple.Create(model.UserTypeID.ToString(), DbType.Int32, ParameterDirection.Input) },
+                        { "Email", Tuple.Create(model.Email == "" ? null : model.Email.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "Password", Tuple.Create(passwordEncrypted.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "ContactNumber", Tuple.Create(model.ContactNumber.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "QRTagNumber", Tuple.Create(incrementedNum.ToString(), DbType.String, ParameterDirection.Input) },
+                        { "VerifyStatus", Tuple.Create(2.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    };
+
+                    var result = await UnitOfWork.Repository<UserRegistrationInsertModel>().ExecuteSPWithInputOutputAsync("[Administration].[DonorTypeUserDetailsSave]", parameters);
+                    if (result > 0)
+                    {
+                        return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+                    }
+                    else
+                    {
+                        return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Error.ToString(), string.Empty, result);
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    throw ex;
+                }
+            }
+            else if (model.UserTypeID == 2)
             {
                 var configath = configuration.GetSection("UserImagePath:Path").Value;
                 var directoryPath = configuration.GetSection("UserImagePath:Directry").Value;
                 var baseLink = configuration.GetSection("UserImagePath:FileLinkBase").Value;
-                int DonorID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveDonor(model, configath, directoryPath, baseLink, passwordEncrypted);
+                int DonorID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveDonor(model, configath, directoryPath, baseLink, passwordEncrypted, incrementedNum);
                 if (DonorID > 0)
                 {
                     return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, DonorID);
@@ -94,7 +139,7 @@ namespace Project.GrateFulDonors.Services
                 var configath = configuration.GetSection("UserImagePath:Path").Value;
                 var directoryPath = configuration.GetSection("UserImagePath:Directry").Value;
                 var baseLink = configuration.GetSection("UserImagePath:FileLinkBase").Value;
-                int SeekerID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveSeeker(model, configath, directoryPath, baseLink, passwordEncrypted);
+                int SeekerID = await UnitOfWork.Repository<UserRegistrationInsertModel>().SaveSeeker(model, configath, directoryPath, baseLink, passwordEncrypted, incrementedNum);
                 if (SeekerID > 0)
                 {
                     return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, SeekerID);
@@ -159,9 +204,16 @@ namespace Project.GrateFulDonors.Services
                     };
 
                     var result = await UnitOfWork.Repository<GetUserImageModel>().GetEntityBySPAsync("[Administration].[GetUserImageByUserID]", parameters);
-                    byte[] imageArray = File.ReadAllBytes(Path.Combine(result.Image));
-                    result.Image = Convert.ToBase64String(imageArray);
-                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+                    if (result != null)
+                    {
+                        byte[] imageArray = File.ReadAllBytes(Path.Combine(result.Image));
+                        result.Image = Convert.ToBase64String(imageArray);
+                        return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, result);
+                    }
+                    else
+                    {
+                        return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, null);
+                    }
 
                 }
                 catch (Exception ex)
@@ -175,6 +227,26 @@ namespace Project.GrateFulDonors.Services
                 return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, null);
             }
             
+        }
+
+        public async Task<GrateFulDonorsResponse> GetLastQRCodeNumber()
+        {
+            try
+            {
+                var result = await UnitOfWork.Repository<GetLastQRTagNumber>().GetEntitiesBySPAsyncWithoutParameters("[Administration].[GetLastQRTagNumber]");
+                var firstItem = result.FirstOrDefault();
+                if (firstItem != null)
+                {
+                    return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, firstItem.QRTagNumber);
+                }
+                return GrateFulDonorsResponse.GenerateResponseMessage(GrateFulDonorsResponseEnum.Success.ToString(), string.Empty, 0);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
         }
     }
 

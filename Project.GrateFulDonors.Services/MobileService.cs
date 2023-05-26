@@ -31,6 +31,7 @@ namespace Project.GrateFulDonors.Services
                 {
                     { "UserID", Tuple.Create(model.UserID.ToString(), DbType.Int32, ParameterDirection.Input) },
                     { "UserType", Tuple.Create(model.UserType.ToString(), DbType.Int32, ParameterDirection.Input) },
+                    { "QrCode", Tuple.Create(model.QrCode.ToString(), DbType.String, ParameterDirection.Input) },
                     { "VerifyStatus", Tuple.Create(2.ToString(), DbType.Int32, ParameterDirection.Input) },
                     { "Result", Tuple.Create("-1".ToString(), DbType.Int32, ParameterDirection.Output) }
                 };

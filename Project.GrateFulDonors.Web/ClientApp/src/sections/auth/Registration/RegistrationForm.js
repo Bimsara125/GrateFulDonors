@@ -34,22 +34,24 @@ export default function RegistrationForm() {
         donationTypeID: 0,
         userTypeID: 0,
         confirmPassword: "",
-        email: ""
+        email: "",
+        contactNumber: ""
     });
     useEffect(() => {
         getDonationTypesForTheDropDown();
     }, []);
     const RegistrationSchema = Yup.object().shape({
-        nic: Yup.string().required('NIC is Required'),
+        nic: Yup.string().required('NIC is required'),
         firstName: Yup.string().required('First Name is required'),
-        userTypeID: Yup.number().min(1, 'User Type Required').required('User Type required'),
+        userTypeID: Yup.number().min(1, 'User Type required').required('User Type required'),
         password: Yup.string()
-            .required('Required')
+            .required('required')
             .min(8, 'Must be at least 8 characters')
             .max(20, 'Must be at most 20 characters'),
         confirmPassword: Yup.string()
-            .required('Required')
-            .oneOf([Yup.ref('password'), null], 'Passwords must match')
+            .required('required')
+            .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+        contactNumber: Yup.string().required('Contact Number is required')
     });
 
     async function registration(values, image) {
@@ -66,6 +68,7 @@ export default function RegistrationForm() {
             donationTypeID: values.donationTypeID,
             confirmPassword: values.confirmPassword,
             email: values.email,
+            contactNumber: values.contactNumber,
             image: image
         }
         const result = await axios.post('https://localhost:7211/api/User/Registration', model);
@@ -98,7 +101,8 @@ export default function RegistrationForm() {
             image: registrationData.image,
             donationTypeID: registrationData.donationTypeID,
             confirmPassword: registrationData.confirmPassword,
-            email: registrationData.email
+            email: registrationData.email,
+            contactNumber: registrationData.contactNumber
         },
         validationSchema: RegistrationSchema,
         onSubmit: (values) => {
@@ -164,6 +168,7 @@ export default function RegistrationForm() {
                             helperText={touched.userTypeID && errors.userTypeID}
                         >
                             <MenuItem key={0} value={0}> Select User Type</MenuItem>
+                            <MenuItem value={1}> Administrator</MenuItem>
                             <MenuItem value={2}> Donor</MenuItem>
                             <MenuItem value={3}> Seeker</MenuItem>
                         </TextField>
@@ -204,22 +209,33 @@ export default function RegistrationForm() {
                             error={Boolean(touched.dob && errors.dob)}
                             helperText={touched.dob && errors.dob}
                         />
-                        <TextField
-                            select
-                            fullWidth
-                            size="small"
-                            label="Donation Type "
-                            value={formik.values.donationTypeID}
-                            onChange={formik.handleChange}
-                            {...getFieldProps('donationTypeID')}
-                            error={Boolean(touched.donationTypeID && errors.donationTypeID)}
-                            helperText={touched.donationTypeID && errors.donationTypeID}
-                        >
-                            <MenuItem key={0} value={0}> Select Donation Type</MenuItem>
-                            {generateDonationTypeDropDownMenu(donationTypes)}
-                        </TextField>
+                        {formik.values.userTypeID != 1 ?
+                            <TextField
+                                select
+                                fullWidth
+                                size="small"
+                                label="Donation Type "
+                                value={formik.values.donationTypeID}
+                                onChange={formik.handleChange}
+                                {...getFieldProps('donationTypeID')}
+                                error={Boolean(touched.donationTypeID && errors.donationTypeID)}
+                                helperText={touched.donationTypeID && errors.donationTypeID}
+                            >
+                                <MenuItem key={0} value={0}> Select Donation Type</MenuItem>
+                                {generateDonationTypeDropDownMenu(donationTypes)}
+                            </TextField> : null}
                     </Stack>
                     <Stack direction={{ xs: 'column', sm: 'row' }} style={{ marginTop: '25px', marginBottom: '25px' }} spacing={3}>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            label="Contact Number *"
+                            value={formik.values.contactNumber}
+                            onChange={formik.handleChange}
+                            {...getFieldProps('contactNumber')}
+                            error={Boolean(touched.contactNumber && errors.contactNumber)}
+                            helperText={touched.contactNumber && errors.contactNumber}
+                        />
                         <TextField
                             select
                             fullWidth
@@ -287,30 +303,31 @@ export default function RegistrationForm() {
                             helperText={touched.email && errors.email}
                         />
                     </Stack>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                        <Card sx={{ maxWidth: 200 }}>
-                            <Card hidden={ImageHide}>
-                                <CardMedia
-                                    component="img"
-                                    height="80"
-                                    image={`data:image/jpeg;base64,${ImageObject}`}
-                                    {...getFieldProps('image')}
-                                    error={Boolean(touched.image && errors.image)}
-                                    helperText={touched.image && errors.image}
+                    {formik.values.userTypeID != 1 ?
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <Card sx={{ maxWidth: 200 }}>
+                                <Card hidden={ImageHide}>
+                                    <CardMedia
+                                        component="img"
+                                        height="80"
+                                        image={`data:image/jpeg;base64,${ImageObject}`}
+                                        {...getFieldProps('image')}
+                                        error={Boolean(touched.image && errors.image)}
+                                        helperText={touched.image && errors.image}
+                                    />
+                                </Card>
+                                <ImageUploader
+                                    withIcon={false}
+                                    singleImage={true}
+                                    withPreview={true}
+                                    buttonText='Upload Your Image'
+                                    onChange={onDrop}
+                                    image={formik.values.image}
+                                    imgExtension={['.jpg', '.png']}
+                                    maxFileSize={5242880}
                                 />
                             </Card>
-                            <ImageUploader
-                                withIcon={false}
-                                singleImage={true}
-                                withPreview={true}
-                                buttonText='Upload Your Image'
-                                onChange={onDrop}
-                                image={formik.values.image}
-                                imgExtension={['.jpg', '.png']}
-                                maxFileSize={5242880}
-                            />
-                        </Card>
-                    </Stack>
+                        </Stack> : null}
                     <LoadingButton fullWidth size="large" type="submit" variant="contained">
                         Register
                     </LoadingButton>

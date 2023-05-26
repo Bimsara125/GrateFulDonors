@@ -175,8 +175,6 @@ export default function DonationRequestAdd() {
         })
     }
 
-    console.log("formik", formik.values)
-
     return (
         <Box>
             <Helmet>
@@ -274,11 +272,14 @@ export default function DonationRequestAdd() {
                             </Stack>
                         </Stack>
                         <br />
-                        <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="right" spacing={2}>
-                            <Button type="submit" color="secondary" variant="contained">
-                                Request
-                            </Button>
-                        </Stack>
+                        <Box>
+                            <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="right" spacing={2}>
+                                <Button type="submit" color="secondary" variant="contained">
+                                    Request
+                                </Button>
+
+                            </Stack>
+                        </Box>
                     </Form>
                 </FormikProvider>
             </Container>

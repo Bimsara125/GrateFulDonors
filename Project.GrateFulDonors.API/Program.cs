@@ -35,7 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors(builder =>
-                builder.WithOrigins(ReactWebServerUrl).AllowAnyHeader().AllowAnyMethod());
+                builder.WithOrigins(ReactWebServerUrl).AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

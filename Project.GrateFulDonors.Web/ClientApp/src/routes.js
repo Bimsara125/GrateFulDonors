@@ -13,6 +13,7 @@ import Registration from './pages/Registration';
 import ProfilePage from './pages/ProfilePage';
 import DonationRequestAdd from './pages/DonationRequestAdd';
 import Loader from './pages/Loader';
+import AboutPage from './pages/AboutPage';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +29,7 @@ export default function Router() {
         { path: 'blog', element: <BlogPage /> },
         { path: 'profilePage', element: <ProfilePage /> },
         { path: 'donationRequestAdd', element: <DonationRequestAdd /> },
+        { path: 'about', element: <AboutPage /> }
       ],
     },
     {

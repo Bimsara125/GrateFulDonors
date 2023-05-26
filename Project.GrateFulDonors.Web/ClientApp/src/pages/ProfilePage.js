@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { Helmet } from 'react-helmet-async';
 import Chip from '@mui/material/Chip';
+import QRCode from 'react-qr-code';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,6 +41,8 @@ const useStyles = makeStyles((theme) => ({
 export default function ProfilePage() {
     const classes = useStyles();
     const [userId, setUserId] = useState(null);
+    const [DobDate, setDobDate] = useState(null);
+    const [JoinedDate, setJoinedDate] = useState(null);
     const [userData, setUserData] = useState({
         userName: "",
         email: "",
@@ -100,7 +103,20 @@ export default function ProfilePage() {
         }
         const result = await axios.post('https://localhost:7211/api/Mobile/GetUserDetailsForProfile', model);
         setProfileData(result.data.data);
+
+        DateFormat(result.data.data.dob, result.data.data.joinedDate);
         return;
+    }
+
+    function DateFormat(dob, joinedDate) {
+        const timestamp = dob;
+        const dobdate = timestamp.split('T')[0];
+
+        const timestamp1 = joinedDate;
+        const joineddate = timestamp1.split('T')[0];
+
+        setDobDate(dobdate);
+        setJoinedDate(joineddate);
     }
 
 
@@ -129,6 +145,15 @@ export default function ProfilePage() {
                             <Chip label="Verified" color="success" />
                             : <Chip label="Not Verified" color="error" />}
                     </Typography>
+                    <br />
+                    {profileData.verifyStatus == 1 ?
+                        <Typography variant="subtitle1" className={classes.subtitle}>
+                            <QRCode value={profileData.qrTagNumber} size={100} />
+                        </Typography> : null}
+                    {profileData.verifyStatus == 1 ?
+                        <Typography variant="subtitle1" className={classes.subtitle}>
+                            {"Scan the QR to Verify"}
+                        </Typography> : null}
                 </Grid>
                 <Grid item xs={12} md={8}>
                     <Paper className={classes.paper}>
@@ -136,38 +161,43 @@ export default function ProfilePage() {
                             About Me
                         </Typography>
                         <div className={classes.content}>
-                            <Typography variant="body1">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                Nulla sed lectus sit amet ipsum volutpat sodales.
-                                Vestibulum bibendum tortor eu est rhoncus tincidunt.
-                                Fusce congue ex eu risus consequat auctor.
-                            </Typography>
+                            {userData.userType == 2 ?
+                                <Typography variant="body1">
+                                    I am a passionate supporter of various charitable causes and believe in making a positive impact on society.
+                                    Giving back to the community and helping those in need has always been an integral part of my life.
+                                    I have been actively involved in supporting different nonprofit organizations and initiatives that align with my values and interests
+                                </Typography> :
+                                <Typography variant="body1">
+                                    I am {profileData.name} Who is seeking a donation from a kind donator to care my canser. It will cost over 100K.
+                                    I couldnt abble to collect or find that amount of money. In this hurry. please help me with this
+                                </Typography>}
                         </div>
                     </Paper>
                     <Paper className={classes.paper}>
                         <Typography variant="h6" component="h2" align="center">
-                            Skills
+                            Personal Details
                         </Typography>
                         <div className={classes.content}>
                             <Typography variant="body1">
-                                - Graphic Design <br />
-                                - Web Design <br />
-                                - UI/UX Design <br />
-                                - Photography
+                                Date of Birth - {DobDate} <br />
+                                Address       - {profileData.address}<br />
+                                Joined Date   - {JoinedDate}
                             </Typography>
                         </div>
                     </Paper>
                     <Paper className={classes.paper}>
-                        <Typography variant="h6" component="h2" align="center">
-                            Experience
-                        </Typography>
-                        <div className={classes.content}>
-                            <Typography variant="body1">
-                                2020 - Present: Freelance Designer <br />
-                                2018 - 2020: Design Intern at XYZ Company <br />
-                                2017 - 2018: Graphic Designer at ABC Agency
-                            </Typography>
-                        </div>
+                        {userData.userType == 2 ?
+                            <Typography variant="h6" component="h2" align="center">
+                                Previous Donations
+                            </Typography> : null}
+                        {userData.userType == 2 ?
+                            <div className={classes.content}>
+                                <Typography variant="body1">
+                                    2020 - Blood Donation <br />
+                                    2018 - Hair Donation <br />
+                                    2017 - Money Donation
+                                </Typography>
+                            </div> : null}
                     </Paper>
                 </Grid>
             </Grid>
