@@ -165,9 +165,9 @@ export default function DashboardAppPage() {
               title="Current donation Types"
               chartLabels={['Blood', 'Money', 'Kidney', 'Hair']}
               chartData={[
-                { name: 'Series 1', data: [80, 50, 30, 40] },
-                { name: 'Series 2', data: [20, 30, 40, 80] },
-                { name: 'Series 3', data: [44, 76, 78, 13] },
+                { name: 'March', data: [80, 50, 30, 40] },
+                { name: 'April', data: [20, 30, 40, 80] },
+                { name: 'May', data: [44, 76, 78, 13] },
               ]}
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
@@ -188,15 +188,15 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline
-              title="Order Timeline"
+              title="Donation Timeline"
               list={[...Array(5)].map((_, index) => ({
                 id: faker.datatype.uuid(),
                 title: [
-                  '1983, orders, $4220',
-                  '12 Invoices have been paid',
-                  'Order #37745 from September',
-                  'New order placed #XF-2356',
-                  'New order placed #XF-2346',
+                  'Kidney Donation Request',
+                  'Blood Donation Request',
+                  'Hair Donation Request',
+                  'Blood Availability',
+                  'Donation Campaingn'
                 ][index],
                 type: `order${index + 1}`,
                 time: faker.date.past(),
@@ -236,11 +236,11 @@ export default function DashboardAppPage() {
             <AppTasks
               title="Tasks"
               list={[
-                { id: '1', label: 'Create FireStone Logo' },
-                { id: '2', label: 'Add SCSS and JS files if required' },
-                { id: '3', label: 'Stakeholder Meeting' },
-                { id: '4', label: 'Scoping & Estimations' },
-                { id: '5', label: 'Sprint Showcase' },
+                { id: '1', label: 'Donate 100 Kidneys to patients' },
+                { id: '2', label: 'Gather the best community in the donation area' },
+                { id: '3', label: 'Help needy patients to recover from their illnesses' },
+                { id: '4', label: 'Donate 100,000 Money ' },
+                { id: '5', label: 'Spread the system around the country' },
               ]}
             />
           </Grid>

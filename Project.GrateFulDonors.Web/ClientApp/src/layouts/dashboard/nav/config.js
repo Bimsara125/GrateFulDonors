@@ -52,7 +52,12 @@ function DashboardNav() {
       title: 'Donation Request',
       path: '/dashboard/donationRequestAdd',
       icon: icon('ic_heart'),
-    }
+    },
+    {
+      title: 'About',
+      path: '/dashboard/about',
+      icon: icon('ic_about'),
+    },
   ];
 
   const donor = [
@@ -76,6 +81,11 @@ function DashboardNav() {
       path: '/dashboard/profilePage',
       icon: icon('ic_usergroup'),
     },
+    {
+      title: 'About',
+      path: '/dashboard/about',
+      icon: icon('ic_about'),
+    },
   ];
 
   const seeker = [
@@ -98,6 +108,11 @@ function DashboardNav() {
       title: 'Donation Request',
       path: '/dashboard/donationRequestAdd',
       icon: icon('ic_heart'),
+    },
+    {
+      title: 'About',
+      path: '/dashboard/about',
+      icon: icon('ic_about'),
     },
   ];
 

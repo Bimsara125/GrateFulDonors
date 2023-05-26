@@ -146,10 +146,12 @@ export default function DonatePage() {
       </Helmet>
 
       <Container>
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Donate
-        </Typography>
-        <br /><Divider variant="middle" /><br />
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4" sx={{ mb: 5 }}>
+            Donate
+          </Typography>
+          <br /><Divider variant="middle" /><br />
+        </Stack>
         {tableData.length == 0 ?
           <SearchNotFound searchQuery="Donation Requests" />
           :
@@ -158,10 +160,12 @@ export default function DonatePage() {
             flexDirection={{ xs: 'column', sm: 'row' }}
             alignItems="center"
             justifyContent="center"
-            spacing={2}
+            spacing={1}
           >
+
             <Card style={{ justifycontent: 'center', width: '85rem' }} >
-              <TableContainer component={Paper} >
+
+              <TableContainer >
                 <Table aria-label="simple table">
                   <TableHead>
                     <TableRow>
@@ -182,49 +186,47 @@ export default function DonatePage() {
                     {(rowsPerPage > 0
                       ? tableData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                       : tableData
-                    ).map((row) => {
-                      const dateParts = row.requestBefore.split('T')[0];
-                      const formattedDate = new Date(dateParts).toLocaleDateString();
+                    )
+                      .map((row) => {
+                        const dateParts = row.requestBefore.split('T')[0];
+                        const formattedDate = new Date(dateParts).toLocaleDateString();
 
-                      return (
-                        <TableRow key={row.donationRequestID}>
-                          <TableCell align="center" component="th" scope="row">
-                            {row.donationTypeName}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.name}
-                          </TableCell>
-                          <TableCell align="center">
-                            {row.contactNumber}
-                          </TableCell>
-                          {row.bloodTypeName !== "" && (
-                            <TableCell align="center">
-                              {row.bloodTypeName}
+                        return (
+                          <TableRow key={row.donationRequestID}>
+                            <TableCell align="center" component="th" scope="row">
+                              {row.donationTypeName}
                             </TableCell>
-                          )}
-                          {row.amount !== 0.00 && (
                             <TableCell align="center">
-                              {row.amount.toFixed(2)}
+                              {row.name}
                             </TableCell>
-                          )}
-                          <TableCell align="center">
-                            {formattedDate}
-                          </TableCell>
-                          <TableCell align="center">
-                            <IconButton aria-label="delete" onClick={() => handleClick(row)}>
+                            <TableCell align="center">
+                              {row.contactNumber}
+                            </TableCell>
+                            {row.bloodTypeName !== "" && (
+                              <TableCell align="center">
+                                {row.bloodTypeName}
+                              </TableCell>
+                            )}
+                            {row.amount !== 0.00 && (
+                              <TableCell align="center">
+                                {row.amount.toFixed(2)}
+                              </TableCell>
+                            )}
+                            <TableCell align="center">
+                              {formattedDate}
+                            </TableCell>
+                            <TableCell align="center">
                               <VolunteerActivismIcon />
-                            </IconButton>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                    {emptyRows > 0 && (
-                      <TableRow style={{ height: 53 * emptyRows }}>
-                        <TableCell colSpan={6} />
-                      </TableRow>
-                    )}
+                              {/* <IconButton aria-label="delete" size="small" onClick={() => handleClick(row)}>
+                                <VolunteerActivismIcon />
+                              </IconButton> */}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+
                   </TableBody>
-                  <TableFooter>
+                  {/* <TableFooter>
                     <TableRow>
                       <TablePagination
                         rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
@@ -243,12 +245,15 @@ export default function DonatePage() {
                         ActionsComponent={TablePaginationActions}
                       />
                     </TableRow>
-                  </TableFooter>
+                  </TableFooter> */}
                 </Table>
               </TableContainer>
             </Card>
+
           </Box>
+
         }
+
       </Container >
     </Box>
   );

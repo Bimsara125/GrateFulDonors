@@ -8,5 +8,6 @@ namespace Project.GrateFulDonors.Core.Models
     {
         public int UserID { get; set; }
         public int UserType { get; set; }
+        public string QrCode { get; set; }
     }
 }
